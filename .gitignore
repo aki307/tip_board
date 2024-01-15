@@ -34,3 +34,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+#firebaseのキー用
+.env.local
+
+#その他
+/public/favicon.ico
