@@ -3,27 +3,32 @@ import { db } from './components/fire';
 import { useState } from 'react';
 import { collection, addDoc } from 'firebase/firestore';
 import { useRouter } from 'next/router';
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { app } from './components/fire';
+
 
 export default function Home() {
   const router = useRouter();
   let title = "新規登録画面";
   const [userName, setUserName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    const auth = getAuth(app);
 
     try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      console.log('成功', userCredential.user);
       const docRef = await addDoc(collection(db, 'users'), {
         user_name: userName,
-        mail: email,
-        password: password 
+        user_id: userCredential.user.uid, 
       });
-
-      router.push('/dashboard');
+      console.log("Document written with ID: ", docRef.id);
+      router.push('/dashboard'); 
     } catch (e) {
-      console.error("Error adding document: ", e);
+      console.error("Error during user registration: ", e);
     }
   };
 
@@ -42,7 +47,7 @@ export default function Home() {
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
               <label htmlFor="userName" className="form-label">ユーザ名</label>
-              <input type="text" id="userName" name="userName" className="form-control" value={userName} onChange={e => setUserName(e.target.value)}  required />
+              <input type="text" id="userName" name="userName" className="form-control" value={userName} onChange={e => setUserName(e.target.value)} required />
             </div>
             <div className="mb-3">
               <label htmlFor="email" className="form-label">メールアドレス</label>
