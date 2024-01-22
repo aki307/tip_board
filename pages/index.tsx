@@ -21,13 +21,13 @@ export default function Home() {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       console.log('成功', userCredential.user);
-      const docRef = await setDoc(doc(db, 'users',userCredential.user.uid), {
+      const docRef = await setDoc(doc(db, 'users', userCredential.user.uid), {
         user_name: userName,
-        user_id: userCredential.user.uid, 
+        user_id: userCredential.user.uid,
         balance: 1000,
       });
-      
-      router.push('/dashboard'); 
+
+      router.push('/dashboard');
     } catch (e) {
       console.error("Error during user registration: ", e);
     }
