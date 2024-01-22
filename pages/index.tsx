@@ -1,7 +1,7 @@
 import Header from './header'
 import { db } from './components/fire';
 import { useState } from 'react';
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, setDoc, doc } from 'firebase/firestore';
 import { useRouter } from 'next/router';
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { app } from './components/fire';
@@ -21,11 +21,12 @@ export default function Home() {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       console.log('成功', userCredential.user);
-      const docRef = await addDoc(collection(db, 'users'), {
+      const docRef = await setDoc(doc(db, 'users',userCredential.user.uid), {
         user_name: userName,
         user_id: userCredential.user.uid, 
+        balance: 1000,
       });
-      console.log("Document written with ID: ", docRef.id);
+      
       router.push('/dashboard'); 
     } catch (e) {
       console.error("Error during user registration: ", e);
